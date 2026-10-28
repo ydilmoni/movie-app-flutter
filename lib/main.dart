@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'models/movie.dart';
+import 'widgets/movie_card.dart';
 
 final List<Movie> movies = [                   // 👈 2. הרשימה, מחוץ לכל מחלקה
   Movie(id: 1, title: "John Wick 1", releaseDate: "2010"),
@@ -21,7 +22,7 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         body: ListView(
-          children: movies.map((movie)=>Text(movie.title)).toList(),
+          children: movies.map((movie)=>MovieCard(movie: movie)).toList(),
         ),
       ),
     );
