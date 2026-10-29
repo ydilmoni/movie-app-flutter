@@ -11,23 +11,35 @@ import 'services/movie_api.dart';
 //   Movie(id: 5, title: "The Lion King", releaseDate: "1994"),
 // ];
 
-Future<void> main() async {
-  final movies = await getPopularMovies();
-  runApp(MainApp(movies: movies));
+void main() {
+  final moviesFuture  = getPopularMovies();
+   runApp(MainApp(moviesFuture: moviesFuture));
 }
 
 class MainApp extends StatelessWidget {
-  final List<Movie> movies;
-  const MainApp({super.key, required this.movies});
+	final Future<List<Movie>> moviesFuture;
+	const MainApp({super.key, required this.moviesFuture});
 
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        body: ListView(
-          children: movies.map((movie)=>MovieCard(movie: movie)).toList(),
-        ),
-      ),
+	@override
+	Widget build(BuildContext context) {
+	return MaterialApp(
+		home: Scaffold(
+			body: FutureBuilder<List<Movie>>(
+				future: moviesFuture,
+					builder: (context, snapshot) {
+					if (snapshot.connectionState == ConnectionState.waiting) {
+						return const Center(child: CircularProgressIndicator());
+					}
+					if (snapshot.hasError) {
+						return Center(child: Text('Error: ${snapshot.error}'));
+					}
+					final movies = snapshot.data!;
+					return ListView(
+						children: movies.map((movie) => MovieCard(movie: movie)).toList(),
+									);	
+					},
+			),
+		),
     );
   }
 }
