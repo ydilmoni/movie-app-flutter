@@ -14,3 +14,14 @@ Future<List<Movie>> getPopularMovies() async {
   final List results = data['results'];
   return results.map((json) => Movie.fromJson(json)).toList();
 }
+
+Future<List<Movie>> searchMovies(String query) async {
+  final response = await http.get(Uri.parse('$_baseUrl/search/movie?api_key=$_apiKey&query=${Uri.encodeQueryComponent(query)}'));
+  if (response.statusCode != 200) {
+    throw Exception('Failed to search movies');
+  }
+  final data = jsonDecode(response.body);
+  final List results = data['results'];
+  
+  return results.map((json) => Movie.fromJson(json)).toList();
+}
