@@ -42,7 +42,11 @@ class _MainAppState extends State<MainApp> {
 							}
 							final movies = snapshot.data!;
 							return ListView(
-								children: movies.map((movie) => MovieCard(movie: movie)).toList(),
+								children: movies.map((movie) => MovieCard(movie: movie,
+								onFavoriteTap: () {
+									print('board got: ${movie.title}');
+								},
+								)).toList(),
 											);	
 							},
 						),
