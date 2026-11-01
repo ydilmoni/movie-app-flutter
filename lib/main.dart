@@ -20,20 +20,34 @@ class _MainAppState extends State<MainApp> {
 	Widget build(BuildContext context) {
 	return MaterialApp(
 		home: Scaffold(
-			body: FutureBuilder<List<Movie>>(
-				future: moviesFuture,
-					builder: (context, snapshot) {
-					if (snapshot.connectionState == ConnectionState.waiting) {
-						return const Center(child: CircularProgressIndicator());
-					}
-					if (snapshot.hasError) {
-						return Center(child: Text('Error: ${snapshot.error}'));
-					}
-					final movies = snapshot.data!;
-					return ListView(
-						children: movies.map((movie) => MovieCard(movie: movie)).toList(),
-									);	
+			body: Column(
+				children: [
+					TextField(
+					decoration: const InputDecoration(hintText: 'Search movies...'),
+					onSubmitted: (String value) {
+						setState(() {
+							moviesFuture = searchMovies(value);
+						});
 					},
+					),
+					Expanded(
+						child: FutureBuilder<List<Movie>>(
+						future: moviesFuture,
+							builder: (context, snapshot) {
+							if (snapshot.connectionState == ConnectionState.waiting) {
+								return const Center(child: CircularProgressIndicator());
+							}
+							if (snapshot.hasError) {
+								return Center(child: Text('Error: ${snapshot.error}'));
+							}
+							final movies = snapshot.data!;
+							return ListView(
+								children: movies.map((movie) => MovieCard(movie: movie)).toList(),
+											);	
+							},
+						),
+					),
+				]
 			),
 		),
     );
