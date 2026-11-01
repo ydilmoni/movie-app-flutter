@@ -16,6 +16,28 @@ class MainApp extends StatefulWidget {
 
 class _MainAppState extends State<MainApp> {
 	Future<List<Movie>> moviesFuture = getPopularMovies();
+	List<Movie> favorites = [];
+	
+	bool isFavorite(Movie movie) {
+		for (final mo in favorites) {       // עובר על כל סרט ברשימה
+			if (mo.id == movie.id) {        // זה אותו סרט?
+				return true;                 // כן: מצאתי, הוא במועדפים
+			}
+		}
+		return false;                      // עברתי על כולם ולא מצאתי
+	}
+
+	void toggleFavorite(Movie movie) {            // toggle = "להפוך": יש→אין, אין→יש
+		setState(() {
+		if (isFavorite(movie)) {
+			favorites.removeWhere((m) => m.id == movie.id);
+		} else {
+			favorites.add(movie);
+		}
+		});
+		print('favorites: ${favorites.length}');
+ 	}
+
 	@override
 	Widget build(BuildContext context) {
 	return MaterialApp(
@@ -42,9 +64,12 @@ class _MainAppState extends State<MainApp> {
 							}
 							final movies = snapshot.data!;
 							return ListView(
-								children: movies.map((movie) => MovieCard(movie: movie,
+								children: movies.map((movie) => 
+								MovieCard(
+								movie: movie,
+								isFavorite: isFavorite(movie),
 								onFavoriteTap: () {
-									print('board got: ${movie.title}');
+									toggleFavorite(movie);
 								},
 								)).toList(),
 											);	
