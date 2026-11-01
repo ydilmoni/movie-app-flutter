@@ -35,7 +35,6 @@ class _MainAppState extends State<MainApp> {
 			favorites.add(movie);
 		}
 		});
-		print('favorites: ${favorites.length}');
  	}
 
 	@override
