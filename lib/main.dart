@@ -24,9 +24,9 @@ class _MainAppState extends State<MainApp> {
 				children: [
 					TextField(
 					decoration: const InputDecoration(hintText: 'Search movies...'),
-					onSubmitted: (String value) {
+					onSubmitted: (String userSearchInput) {
 						setState(() {
-							moviesFuture = searchMovies(value);
+							moviesFuture = (userSearchInput.trim().isNotEmpty) ? searchMovies(userSearchInput) : getPopularMovies();
 						});
 					},
 					),
