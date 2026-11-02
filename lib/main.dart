@@ -41,11 +41,11 @@ class _MainAppState extends State<MainApp> {
 	Widget build(BuildContext context) {
 		final screens = [
 			HomeScreen(isFavorite: isFavorite, onToggleFavorite: toggleFavorite),   // 0
-			const FavoritesScreen(),   // 1
+			FavoritesScreen(favorites: favorites, onToggleFavorite: toggleFavorite),   // 1
 		];
 		return MaterialApp(
 			home: Scaffold(
-					body: screens[currentTab],
+					body: IndexedStack(index: currentTab, children: screens),
 					bottomNavigationBar: BottomNavigationBar(
 						currentIndex: currentTab,
 						onTap: (index) {
