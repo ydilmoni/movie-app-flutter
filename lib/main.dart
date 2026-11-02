@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'models/movie.dart';
 import 'screens/home_screen.dart';
+import 'screens/favorites_screen.dart';
 
 void main() {
    runApp(const MainApp());
@@ -15,6 +16,7 @@ class MainApp extends StatefulWidget {
 
 class _MainAppState extends State<MainApp> {
 	List<Movie> favorites = [];
+	int currentTab = 0;   // 0 = Home, 1 = Favorites
 	
 	bool isFavorite(Movie movie) {
 		for (final mo in favorites) {       // עובר על כל סרט ברשימה
@@ -37,13 +39,26 @@ class _MainAppState extends State<MainApp> {
 
 	@override
 	Widget build(BuildContext context) {
-	return MaterialApp(
-		home: Scaffold(
-				body: HomeScreen(
-					isFavorite: isFavorite,
-					onToggleFavorite: toggleFavorite,
+		final screens = [
+			HomeScreen(isFavorite: isFavorite, onToggleFavorite: toggleFavorite),   // 0
+			const FavoritesScreen(),   // 1
+		];
+		return MaterialApp(
+			home: Scaffold(
+					body: screens[currentTab],
+					bottomNavigationBar: BottomNavigationBar(
+						currentIndex: currentTab,
+						onTap: (index) {
+							setState(() {
+								currentTab = index;
+							});
+						},
+						items: const [
+							BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+							BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'Favorites'),
+						],
+				),
 			),
-		),
-    );
+		);
   }
 }
