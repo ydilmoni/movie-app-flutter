@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/movie.dart';
-import '../widgets/movie_card.dart';
-
+import '../widgets/movie_grid.dart';
 class FavoritesScreen extends StatelessWidget {
   final List<Movie> favorites;
   final void Function(Movie movie) onToggleFavorite;
@@ -13,16 +12,6 @@ class FavoritesScreen extends StatelessWidget {
     if (favorites.isEmpty) {
       return const Center(child: Text('No favorites yet.'));
     }
-    return ListView(
-      children: favorites.map((movie) => 
-        MovieCard(
-          movie: movie,
-          isFavorite: true,
-          onFavoriteTap: () {
-            onToggleFavorite(movie);
-          },
-        )
-      ).toList(),
-    );
+    return MovieGrid(movies: favorites, isFavorite: (movie) => true, onToggleFavorite: onToggleFavorite);
   }
 }

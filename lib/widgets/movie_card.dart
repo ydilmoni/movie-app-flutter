@@ -17,6 +17,9 @@ class MovieCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
+        leading: movie.posterUrl == null                     // ← חדש
+            ? const Icon(Icons.movie)
+            : Image.network(movie.posterUrl!, width: 40),
         title:Text(movie.title),
         subtitle: Text(movie.releaseDate),
         trailing: IconButton(

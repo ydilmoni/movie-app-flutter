@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'models/movie.dart';
 import 'screens/home_screen.dart';
 import 'screens/favorites_screen.dart';
+import 'theme/app_theme.dart';
 
 void main() {
    runApp(const MainApp());
@@ -44,6 +45,7 @@ class _MainAppState extends State<MainApp> {
 			FavoritesScreen(favorites: favorites, onToggleFavorite: toggleFavorite),   // 1
 		];
 		return MaterialApp(
+			theme: appTheme,
 			home: Scaffold(
 					body: IndexedStack(index: currentTab, children: screens),
 					bottomNavigationBar: BottomNavigationBar(

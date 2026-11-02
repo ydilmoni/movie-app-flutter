@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/movie.dart';
 import '../services/movie_api.dart';
-import '../widgets/movie_card.dart';
+import '../widgets/movie_grid.dart';
 
 class HomeScreen extends StatefulWidget {
   final bool Function(Movie movie) isFavorite;        // מקבלת סרט, מחזירה כן/לא
@@ -39,17 +39,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 }
                 final movies = snapshot.data!;
-                return ListView(
-                  children: movies.map((movie) => 
-                    MovieCard(
-                      movie: movie,
-                      isFavorite: widget.isFavorite(movie),
-                      onFavoriteTap: () {
-                      widget.onToggleFavorite(movie);
-                      },
-                    )
-                  ).toList(),
-                );	
+                return MovieGrid(movies: movies, isFavorite: widget.isFavorite, onToggleFavorite: widget.onToggleFavorite);
+
 							},
 						),
 					),
