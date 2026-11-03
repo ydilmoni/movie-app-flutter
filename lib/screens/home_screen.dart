@@ -1,47 +1,31 @@
 import 'package:flutter/material.dart';
-import '../models/movie.dart';
-import '../services/movie_api.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../providers/search_provider.dart';
 import '../widgets/movie_grid.dart';
-
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
-
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final moviesAsync = ref.watch(moviesProvider);
 
-class _HomeScreenState extends State<HomeScreen> {
-  Future<List<Movie>> moviesFuture = getPopularMovies();
-
-  @override
-  Widget build(BuildContext context) {
     return Column(
-				children: [
-					TextField(
-					decoration: const InputDecoration(hintText: 'Search movies...'),
-					onSubmitted: (String userSearchInput) {
-						setState(() {
-							moviesFuture = (userSearchInput.trim().isNotEmpty) ? searchMovies(userSearchInput) : getPopularMovies();
-						});
-					},
-					),
-					Expanded(
-						child: FutureBuilder<List<Movie>>(
-						future: moviesFuture,
-							builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                }
-                final movies = snapshot.data!;
-                return MovieGrid(movies: movies);
-
-							},
-						),
-					),
-				]
-			);
+      children: [
+        TextField(
+          decoration: const InputDecoration(hintText: 'Search movies...'),
+          onSubmitted: (String userSearchInput) {
+            ref.read(searchQueryProvider.notifier).setQuery(userSearchInput);
+          },
+        ),
+        Expanded(
+          child: moviesAsync.when(
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (error, stack) => Center(child: Text('Error: $error')),
+            data: (movies) => MovieGrid(movies: movies),
+          ),
+        ),
+      ],
+    );
   }
 }
+
+
