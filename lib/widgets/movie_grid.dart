@@ -11,9 +11,9 @@ class MovieGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GridView.count(
-      crossAxisCount: 3,          // 3 בשורה
-      childAspectRatio: 0.5,      // רוחב חלקי גובה: כל משבצת גבוהה פי 2 מרוחבה
+    return GridView.extent(
+      maxCrossAxisExtent: 200,   // רוחב מקסימלי של כל משבצת
+      childAspectRatio: 0.58,      // רוחב חלקי גובה: כל משבצת גבוהה פי 2 מרוחבה
       mainAxisSpacing: 8,         // רווח בין שורות
       crossAxisSpacing: 8,        // רווח בין טורים
       padding: const EdgeInsets.all(12),
