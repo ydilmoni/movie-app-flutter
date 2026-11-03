@@ -4,10 +4,8 @@ import 'movie_card.dart';
 
 class MovieGrid extends StatelessWidget {
   final List<Movie> movies;
-  final bool Function(Movie movie) isFavorite;
-  final void Function(Movie movie) onToggleFavorite;
 
-  const MovieGrid({super.key, required this.movies, required this.isFavorite, required this.onToggleFavorite});
+  const MovieGrid({super.key, required this.movies});
 
   @override
   Widget build(BuildContext context) {
@@ -20,12 +18,7 @@ class MovieGrid extends StatelessWidget {
       children: movies.map((movie) => 
                     MovieCard(
                       movie: movie,
-                      isFavorite: isFavorite(movie),
-                      onFavoriteTap:   () {
-                      onToggleFavorite(movie);
-                      },
-                    )
-                  ).toList(),
-    ); 
+                      )).toList(),  
+                    );
   }
 }

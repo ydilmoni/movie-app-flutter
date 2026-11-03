@@ -4,10 +4,7 @@ import '../services/movie_api.dart';
 import '../widgets/movie_grid.dart';
 
 class HomeScreen extends StatefulWidget {
-  final bool Function(Movie movie) isFavorite;        // מקבלת סרט, מחזירה כן/לא
-  final void Function(Movie movie) onToggleFavorite;  // מקבלת סרט, לא מחזירה כלום
-
-  const HomeScreen({super.key, required this.isFavorite, required this.onToggleFavorite});
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -39,7 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 }
                 final movies = snapshot.data!;
-                return MovieGrid(movies: movies, isFavorite: widget.isFavorite, onToggleFavorite: widget.onToggleFavorite);
+                return MovieGrid(movies: movies);
 
 							},
 						),

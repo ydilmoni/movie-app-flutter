@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
 import '../models/movie.dart';
 import '../theme/app_theme.dart';
-
-class MovieCard extends StatelessWidget {
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../providers/favorites_provider.dart';
+class MovieCard extends ConsumerWidget  {
   final Movie movie;
-  final void Function() onFavoriteTap;
-  final bool isFavorite;    
+  
   
 
   const MovieCard({
     super.key,
     required this.movie,
-    required this.onFavoriteTap,
-    required this.isFavorite,});
+    });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final favorites = ref.watch(favoritesProvider); 
+    final isFavorite = favorites.any((m) => m.id == movie.id);
     final year = movie.releaseDate.length >= 4 ? movie.releaseDate.substring(0, 4) : '';
     return Container(
       padding: const EdgeInsets.all(2),   // רווח בין הגבול לתוכן
@@ -51,7 +52,7 @@ class MovieCard extends StatelessWidget {
                   isFavorite ? Icons.favorite : Icons.favorite_border,
                   color: isFavorite ? AppColors.accent : AppColors.textSecondary,
                 ),
-                onPressed: onFavoriteTap,
+                onPressed: () => ref.read(favoritesProvider.notifier).toggle(movie),
               ),
               const SizedBox(width: 6),
               Expanded(

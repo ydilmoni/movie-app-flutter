@@ -43,19 +43,20 @@ Default Material font (Roboto) for now. Option later: `google_fonts` with a roun
 
 ## 5. Components
 
-**Movie tile** (replaces the current `ListTile` card)
+**Movie tile** (`widgets/movie_card.dart`)
 ```
-┌─────────┐
-│  poster │ ♥   heart top-right, on a black 60% circle
-│   2:3   │
-└─────────┘
-Title of movie…     posterTitle, 1 line
-2026                caption
+┌───────────┐  1px border: surfaceHigh, accent when favorite
+│  poster   │
+│    2:3    │
+├───────────┤
+│ ♥ Title…  │  heart 32px left of title, top-aligned; title 1 line, ellipsis
+│   2026    │  caption, textSecondary
+└───────────┘
 ```
-- Poster: `https://image.tmdb.org/t/p/w342{poster_path}`. No poster → `surfaceHigh` box with a film icon.
-- Heart: empty `textSecondary` / filled `accent`.
+- Poster: `https://image.tmdb.org/t/p/w342{poster_path}`, `radiusSmall`. No poster → `surfaceHigh` box with a film icon.
+- Heart: empty `textSecondary` / filled `accent`. The border turns `accent` too, so a favorite reads at a glance.
 
-**Grid:** `GridView`, 3 columns, `gap` 8, poster ratio 2:3 + room for two text lines.
+**Grid:** `GridView.extent`, max tile width 200 (3 columns on a phone, more on desktop), `gap` 8, `childAspectRatio` 0.58.
 
 **Search field:** filled `surfaceHigh`, `radiusPill`, search icon, hint "Search movies", no border.
 

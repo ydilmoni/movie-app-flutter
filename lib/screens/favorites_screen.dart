@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import '../models/movie.dart';
 import '../widgets/movie_grid.dart';
-class FavoritesScreen extends StatelessWidget {
-  final List<Movie> favorites;
-  final void Function(Movie movie) onToggleFavorite;
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../providers/favorites_provider.dart';
 
-  const FavoritesScreen({super.key, required this.favorites, required this.onToggleFavorite});
+class FavoritesScreen extends ConsumerWidget  {
+  const FavoritesScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final favorites = ref.watch(favoritesProvider); // ← the list from the board
     if (favorites.isEmpty) {
       return const Center(child: Text('No favorites yet.'));
     }
-    return MovieGrid(movies: favorites, isFavorite: (movie) => true, onToggleFavorite: onToggleFavorite);
+    return MovieGrid(movies: favorites);
   }
 }

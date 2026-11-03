@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'models/movie.dart';
 import 'screens/home_screen.dart';
 import 'screens/favorites_screen.dart';
 import 'theme/app_theme.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 
 void main() {
-   runApp(const MainApp());
+   runApp(const ProviderScope(child: MainApp()));
 }
 
 class MainApp extends StatefulWidget {
@@ -16,33 +17,14 @@ class MainApp extends StatefulWidget {
 }
 
 class _MainAppState extends State<MainApp> {
-	List<Movie> favorites = [];
+
 	int currentTab = 0;   // 0 = Home, 1 = Favorites
 	
-	bool isFavorite(Movie movie) {
-		for (final mo in favorites) {       // עובר על כל סרט ברשימה
-			if (mo.id == movie.id) {        // זה אותו סרט?
-				return true;                 // כן: מצאתי, הוא במועדפים
-			}
-		}
-		return false;                      // עברתי על כולם ולא מצאתי
-	}
-
-	void toggleFavorite(Movie movie) {            // toggle = "להפוך": יש→אין, אין→יש
-		setState(() {
-		if (isFavorite(movie)) {
-			favorites.removeWhere((m) => m.id == movie.id);
-		} else {
-			favorites.add(movie);
-		}
-		});
- 	}
-
 	@override
 	Widget build(BuildContext context) {
 		final screens = [
-			HomeScreen(isFavorite: isFavorite, onToggleFavorite: toggleFavorite),   // 0
-			FavoritesScreen(favorites: favorites, onToggleFavorite: toggleFavorite),   // 1
+			const HomeScreen(),   // 0
+			const FavoritesScreen(),   // 1
 		];
 		return MaterialApp(
 			theme: appTheme,
