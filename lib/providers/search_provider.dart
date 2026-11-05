@@ -11,10 +11,12 @@ class SearchQueryNotifier extends Notifier<String> {
   }
 }
 
-final searchQueryProvider =
-    NotifierProvider<SearchQueryNotifier, String>(SearchQueryNotifier.new);
-
+final searchQueryProvider = NotifierProvider<SearchQueryNotifier, String>(
+  SearchQueryNotifier.new,
+);
+final movieApiProvider = Provider<MovieApi>((ref) => MovieApi());
 final moviesProvider = FutureProvider<List<Movie>>((ref) {
   final query = ref.watch(searchQueryProvider);
-  return query.isEmpty ? getPopularMovies() : searchMovies(query);
+    final api = ref.watch(movieApiProvider);
+  return query.isEmpty ? api.getPopularMovies() : api.searchMovies(query);
 });

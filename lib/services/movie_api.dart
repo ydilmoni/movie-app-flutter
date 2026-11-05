@@ -5,23 +5,31 @@ import '../models/movie.dart';
 const _apiKey = String.fromEnvironment('TMDB_KEY');
 const _baseUrl = 'https://api.themoviedb.org/3';
 
-Future<List<Movie>> getPopularMovies() async {
-  final response = await http.get(Uri.parse('$_baseUrl/movie/popular?api_key=$_apiKey'));
-  if (response.statusCode != 200) {
-    throw Exception('Failed to fetch popular movies');
+class MovieApi {
+  Future<List<Movie>> getPopularMovies() async {
+    final response = await http.get(
+      Uri.parse('$_baseUrl/movie/popular?api_key=$_apiKey'),
+    );
+    if (response.statusCode != 200) {
+      throw Exception('Failed to fetch popular movies');
+    }
+    final data = jsonDecode(response.body);
+    final List results = data['results'];
+    return results.map((json) => Movie.fromJson(json)).toList();
   }
-  final data = jsonDecode(response.body);
-  final List results = data['results'];
-  return results.map((json) => Movie.fromJson(json)).toList();
-}
 
-Future<List<Movie>> searchMovies(String query) async {
-  final response = await http.get(Uri.parse('$_baseUrl/search/movie?api_key=$_apiKey&query=${Uri.encodeQueryComponent(query)}'));
-  if (response.statusCode != 200) {
-    throw Exception('Failed to search movies');
+  Future<List<Movie>> searchMovies(String query) async {
+    final response = await http.get(
+      Uri.parse(
+        '$_baseUrl/search/movie?api_key=$_apiKey&query=${Uri.encodeQueryComponent(query)}',
+      ),
+    );
+    if (response.statusCode != 200) {
+      throw Exception('Failed to search movies');
+    }
+    final data = jsonDecode(response.body);
+    final List results = data['results'];
+
+    return results.map((json) => Movie.fromJson(json)).toList();
   }
-  final data = jsonDecode(response.body);
-  final List results = data['results'];
-  
-  return results.map((json) => Movie.fromJson(json)).toList();
 }

@@ -22,7 +22,7 @@ class HomeScreen extends ConsumerWidget {
             error: (error, stack) => Center(child: Text('Error: $error')),
             data: (movies) => MovieGrid(movies: movies),
           ),
-        ),
+        ), 
       ],
     );
   }
