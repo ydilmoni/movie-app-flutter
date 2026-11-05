@@ -43,7 +43,8 @@ Navigation: a bottom bar with two tabs (Home, Favorites). `IndexedStack` keeps b
 |---|---|---|---|
 | `movieApiProvider` | `Provider<MovieApi>` | The API client | `moviesProvider` |
 | `searchQueryProvider` | `NotifierProvider<…, String>` | The search text (`setQuery`, trimmed) | `moviesProvider`; Home writes it |
-| `moviesProvider` | `FutureProvider<List<Movie>>` | Popular or search results | Home (`.when`) |
+| `languageProvider` | `NotifierProvider<…, String>` | TMDB language, `he-IL` or `en-US` (`toggleLanguage`) | `moviesProvider`, Home button label |
+| `moviesProvider` | `FutureProvider<List<Movie>>` | Popular or search results in the chosen language | Home (`.when`) |
 | `favoritesProvider` | `NotifierProvider<…, List<Movie>>` | Favorite movies (`toggle`, `isFavorite`) | `MovieCard`, Favorites screen |
 
 `MainApp` keeps only `currentTab` in `setState`. It is local UI state, so it does not need a provider.
@@ -56,12 +57,13 @@ lib/
 ├── models/
 │   └── movie.dart
 ├── services/
-│   └── movie_api.dart            class MovieApi: getPopularMovies(), searchMovies(query)
+│   └── movie_api.dart            class MovieApi: getPopularMovies(language), searchMovies(query, language)
 ├── providers/
 │   ├── favorites_provider.dart   FavoritesNotifier + favoritesProvider
+│   ├── language_provider.dart    LanguageNotifier + languageProvider
 │   └── search_provider.dart      searchQueryProvider, movieApiProvider, moviesProvider
 ├── screens/
-│   ├── home_screen.dart          search field + MovieGrid
+│   ├── home_screen.dart          search field + language button + MovieGrid
 │   └── favorites_screen.dart     MovieGrid of favorites, or an empty message
 ├── widgets/
 │   ├── movie_grid.dart           GridView.extent shared by both screens
@@ -80,7 +82,9 @@ Home opens        → ref.watch(moviesProvider)
                   → moviesProvider: query is '' → api.getPopularMovies()
 Enter in search   → ref.read(searchQueryProvider.notifier).setQuery(text)
                   → searchQueryProvider changes → moviesProvider runs again
-                  → api.searchMovies(text)   (empty text → popular)
+                  → api.searchMovies(text, language)   (empty text → popular)
+Language button   → ref.read(languageProvider.notifier).toggleLanguage()
+                  → moviesProvider runs again with the new language
 .when             → loading: spinner · error: message · data: MovieGrid
 ```
 
@@ -130,4 +134,4 @@ flutter run -d chrome --dart-define-from-file=env.json
 
 ## 10. Not now
 
-TV series, genres, persistence, a retry button, more tests (search, favorites toggle).
+UI translation + RTL (the same `languageProvider` will set the app locale), persistence, watched / want-to-watch lists, TV series, genres, a retry button, more tests (search, favorites toggle).

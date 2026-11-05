@@ -16,6 +16,7 @@ The grid adapts to the screen width (landscape):
 - Popular movies from [TMDB](https://www.themoviedb.org/)
 - Search (press Enter; an empty search returns to popular)
 - Favorites: tap the heart, see them in the Favorites tab
+- Hebrew / English movie titles: a button next to the search field switches the TMDB language and refetches
 - Loading and error states
 - Dark theme with a single accent color ([DESIGN_SYSTEM.md](DESIGN_SYSTEM.md))
 
@@ -27,12 +28,12 @@ Flutter · Dart · [Riverpod 3](https://riverpod.dev/) · `http` · TMDB REST AP
 
 ```
 UI        screens/ + widgets/      ConsumerWidget, reads providers with ref.watch
-State     providers/               favorites (Notifier), search text (Notifier), movies (FutureProvider)
+State     providers/               favorites, search text, language (Notifier), movies (FutureProvider)
 Service   services/movie_api.dart  MovieApi: HTTP + JSON -> Movie
 ```
 
 - **No prop drilling.** The movie card and the Favorites screen read favorites straight from `favoritesProvider`.
-- **Movies follow the search text.** `moviesProvider` watches `searchQueryProvider`, so a new search refetches by itself.
+- **Movies follow the search text and language.** `moviesProvider` watches `searchQueryProvider` and `languageProvider`, so a new search or language refetches by itself.
 - **Dependency injection.** `moviesProvider` does not create `MovieApi`. It gets it from `movieApiProvider`. In tests the provider is overridden with `FakeMovieApi`, so tests run without network and with known data.
 
 ```dart
@@ -69,7 +70,7 @@ lib/
   main.dart                 ProviderScope, theme, bottom navigation
   models/movie.dart         Movie + fromJson
   services/movie_api.dart   MovieApi (TMDB calls)
-  providers/                favorites, search, movies, movieApi
+  providers/                favorites, search, movies, movieApi, language
   screens/                  home_screen, favorites_screen
   widgets/                  movie_card, movie_grid
   theme/app_theme.dart      colors and ThemeData
