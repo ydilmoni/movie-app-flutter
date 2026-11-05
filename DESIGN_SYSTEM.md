@@ -1,6 +1,6 @@
 # Design System — Movie App
 
-> Status: v0.1 · 2026-11-01 · Dark only · Look: Spotify-style dark + green, posters in a 3-column grid
+> Status: v0.2 · 2026-11-05 · Dark only · Look: Spotify-style dark + green, a poster grid that adapts to screen width
 
 ## 1. Principles
 
@@ -15,66 +15,65 @@ Use the token name in code (`AppColors.accent`), never a raw hex.
 | Token | Hex | Use |
 |---|---|---|
 | `background` | `#121212` | App background |
-| `surface` | `#181818` | Bottom bar, cards behind posters |
-| `surfaceHigh` | `#282828` | Search field, poster placeholder |
+| `surface` | `#181818` | Bottom bar |
+| `surfaceHigh` | `#282828` | Search field, poster placeholder, card border |
 | `textPrimary` | `#FFFFFF` | Titles |
-| `textSecondary` | `#B3B3B3` | Year, hints, unselected tab |
-| `accent` | `#1DB954` | Filled heart, selected tab, spinner, buttons |
-| `error` | `#E24B4A` | Error message icon |
+| `textSecondary` | `#B3B3B3` | Year, hints, empty heart, unselected tab |
+| `accent` | `#1DB954` | Filled heart, favorite card border, selected tab, spinner |
+| `error` | `#E24B4A` | `colorScheme.error` (not used directly yet) |
 
 ## 3. Typography
 
-Default Material font (Roboto) for now. Option later: `google_fonts` with a rounded sans (e.g. Figtree) for a closer Spotify feel.
-
-| Token | Size | Weight | Use |
-|---|---|---|---|
-| `screenTitle` | 24 | Bold | "Movies", "Favorites" |
-| `posterTitle` | 13 | Medium (500) | Movie title under poster, 1 line, ellipsis |
-| `caption` | 12 | Regular | Year under title, `textSecondary` |
+Default Material font and sizes (Roboto). No custom text styles yet.
+- Movie title: default size, 1 line, ellipsis.
+- Year: default size, `textSecondary`.
 
 ## 4. Spacing and shape
 
-| Token | Value | Use |
+| Name | Value | Use |
 |---|---|---|
-| `gap` | 8 | Between grid items |
-| `pagePadding` | 12 | Screen edges |
-| `radiusSmall` | 6 | Posters |
-| `radiusPill` | 24 | Search field |
+| gap | 8 | Between grid items |
+| page padding | 12 | Grid edges |
+| poster radius | 6 | Posters |
+| card radius | 8 | Card border |
+| pill radius | 24 | Search field |
+
+These values are written directly in the widgets. Only colors are tokens in code (`AppColors`).
 
 ## 5. Components
 
 **Movie tile** (`widgets/movie_card.dart`)
 ```
 ┌───────────┐  1px border: surfaceHigh, accent when favorite
-│  poster   │
-│    2:3    │
+│  poster   │  fills the height left above the text row
+│           │
 ├───────────┤
 │ ♥ Title…  │  heart 32px left of title, top-aligned; title 1 line, ellipsis
-│   2026    │  caption, textSecondary
+│   2026    │  textSecondary
 └───────────┘
 ```
-- Poster: `https://image.tmdb.org/t/p/w342{poster_path}`, `radiusSmall`. No poster → `surfaceHigh` box with a film icon.
+- Poster: `https://image.tmdb.org/t/p/w342{poster_path}`, `BoxFit.cover`, poster radius. It is `Expanded`, not a fixed 2:3 box, so the card never overflows its grid cell at any screen width. No poster → `surfaceHigh` box with a film icon.
 - Heart: empty `textSecondary` / filled `accent`. The border turns `accent` too, so a favorite reads at a glance.
 
-**Grid:** `GridView.extent`, max tile width 200 (3 columns on a phone, more on desktop), `gap` 8, `childAspectRatio` 0.58.
+**Grid** (`widgets/movie_grid.dart`, shared by Home and Favorites): `GridView.extent`, max tile width 200 (2 columns on a phone, 5+ in landscape or on desktop), gap 8, page padding 12, `childAspectRatio` 0.58.
 
-**Search field:** filled `surfaceHigh`, `radiusPill`, search icon, hint "Search movies", no border.
+**Search field:** filled `surfaceHigh`, pill radius, hint "Search movies...", no border. Search runs on Enter.
 
-**Bottom bar:** `background` color, two tabs (Home, Favorites). Selected = `accent`, unselected = `textSecondary`.
+**Bottom bar:** `surface` color, two tabs (Home, Favorites). Selected = `accent`, unselected = `textSecondary`.
 
 **States**
 | State | Look |
 |---|---|
 | Loading | Centered spinner in `accent` |
-| Error | `error` icon + short message + "Try again" button |
-| No results | "No movies found for "batman"" in `textSecondary` |
-| No favorites | "Tap the heart on a movie to save it here." |
+| Error | Centered text `Error: …` |
+| No results | Empty grid |
+| No favorites | Centered text "No favorites yet." |
 
 ## 6. In Flutter
 
-- All tokens in `lib/theme/app_theme.dart`: `AppColors` + one `ThemeData` (`useMaterial3: true`, `ColorScheme.dark(...)` from the table above).
-- `MaterialApp(theme: appTheme)`. Widgets read colors from the theme or `AppColors`, never write hex.
+- Colors in `lib/theme/app_theme.dart`: `AppColors` + one `ThemeData` (`useMaterial3: true`, `ColorScheme.dark(...)`, bottom bar theme, input theme).
+- `MaterialApp(theme: appTheme, debugShowCheckedModeBanner: false)`. Widgets read colors from the theme or `AppColors`, never write hex.
 
 ## 7. Not now
 
-Light mode, animations, custom fonts, a hero banner.
+Light mode, animations, custom fonts (e.g. `google_fonts` with Figtree), text style and spacing tokens in code, an error icon + "Try again" button, a "No movies found" message, a search icon in the field, a hero banner.
