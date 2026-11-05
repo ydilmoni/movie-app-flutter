@@ -28,9 +28,9 @@ class MovieCard extends ConsumerWidget  {
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          AspectRatio(
-            aspectRatio: 2 / 3,  // יחס של פוסטר: רוחב 2, גובה 3
+            Expanded(   // הפוסטר לוקח את כל הגובה שנשאר אחרי הטקסט
             child: ClipRRect(
               borderRadius: BorderRadius.circular(6),
               child: 

@@ -27,6 +27,7 @@ class _MainAppState extends State<MainApp> {
 			const FavoritesScreen(),   // 1
 		];
 		return MaterialApp(
+      debugShowCheckedModeBanner: false,   // בלי הסרט האדום DEBUG
 			theme: appTheme,
 			home: Scaffold(
 					body: IndexedStack(index: currentTab, children: screens),
