@@ -18,6 +18,16 @@ class Movie {
     );
   }
 
+  Map<String, dynamic> toJson() {
+    return {
+      'id':id,
+      'title': title,
+      'release_date': releaseDate,
+      'poster_path': posterPath
+    };
+  }
+
+
   String? get posterUrl {
     if (posterPath != null) {
       return 'https://image.tmdb.org/t/p/w342$posterPath';

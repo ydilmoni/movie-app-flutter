@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:movie_app/providers/storage_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'screens/home_screen.dart';
 import 'screens/favorites_screen.dart';
 import 'theme/app_theme.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 
-void main() {
-   runApp(const ProviderScope(child: MainApp()));
-}
 
+Future<void> main() async {                         // main שמותר לו לחכות
+  WidgetsFlutterBinding.ensureInitialized();        // "Flutter, תתעורר", חובה לפני חבילה שנוגעת במכשיר
+  final prefs = await SharedPreferences.getInstance();   // פותח מחברת ומחכה
+  runApp(ProviderScope(
+    overrides: [prefsProvider.overrideWithValue(prefs)],  // מניח אותה במשבצת
+    child: const MainApp(),
+  ));
+}
 class MainApp extends StatefulWidget {
 	const MainApp({super.key});
 

@@ -15,14 +15,14 @@ The grid adapts to the screen width (landscape):
 
 - Popular movies from [TMDB](https://www.themoviedb.org/)
 - Search (press Enter; an empty search returns to popular)
-- Favorites: tap the heart, see them in the Favorites tab
+- Favorites: tap the heart, see them in the Favorites tab. Saved on the device (`shared_preferences`), so they survive a restart
 - Hebrew / English movie titles: a button next to the search field switches the TMDB language and refetches
 - Loading and error states
 - Dark theme with a single accent color ([DESIGN_SYSTEM.md](DESIGN_SYSTEM.md))
 
 ## Tech
 
-Flutter · Dart · [Riverpod 3](https://riverpod.dev/) · `http` · TMDB REST API
+Flutter · Dart · [Riverpod 3](https://riverpod.dev/) · `http` · `shared_preferences` · TMDB REST API
 
 ## How it is built
 
@@ -70,7 +70,7 @@ lib/
   main.dart                 ProviderScope, theme, bottom navigation
   models/movie.dart         Movie + fromJson
   services/movie_api.dart   MovieApi (TMDB calls)
-  providers/                favorites, search, movies, movieApi, language
+  providers/                favorites, search, movies, movieApi, language, storage
   screens/                  home_screen, favorites_screen
   widgets/                  movie_card, movie_grid
   theme/app_theme.dart      colors and ThemeData
