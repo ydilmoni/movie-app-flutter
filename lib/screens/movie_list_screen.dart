@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/movie.dart';
-import '../providers/favorites_provider.dart';
+import '../providers/movie_lists_provider.dart';
 import '../widgets/movie_grid.dart';
 
 class MovieListScreen extends ConsumerWidget {

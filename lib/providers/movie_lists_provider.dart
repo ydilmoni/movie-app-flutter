@@ -13,10 +13,10 @@ class MovieListNotifier extends Notifier<List<Movie>> {
     return texts.map((text) => Movie.fromJson(jsonDecode(text))).toList();
   }
 
-  bool isFavorite(Movie movie) => state.any((m) => m.id == movie.id);
+  bool contains(Movie movie) => state.any((m) => m.id == movie.id);
 
   void toggle(Movie movie) {
-    if (isFavorite(movie)) {
+    if (contains (movie)) {
       state = state.where((m) => m.id != movie.id).toList();   // רשימה חדשה, בלי הסרט
     } else {
       state = [...state, movie];                               // רשימה חדשה, עם הסרט

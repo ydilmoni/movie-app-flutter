@@ -60,7 +60,7 @@ lib/
 ├── services/
 │   └── movie_api.dart            class MovieApi: getPopularMovies(language), searchMovies(query, language)
 ├── providers/
-│   ├── favorites_provider.dart   MovieListNotifier + favorites, watchlist and watched providers
+│   ├── movie_lists_provider.dart MovieListNotifier + favorites, watchlist and watched providers
 │   ├── language_provider.dart    LanguageNotifier + languageProvider
 │   ├── storage_provider.dart     prefsProvider (overridden in main)
 │   └── search_provider.dart      searchQueryProvider, movieApiProvider, moviesProvider

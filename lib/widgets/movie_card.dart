@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/movie.dart';
 import '../theme/app_theme.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../providers/favorites_provider.dart';
+import '../providers/movie_lists_provider.dart';
 class MovieCard extends ConsumerWidget  {
   final Movie movie;
   

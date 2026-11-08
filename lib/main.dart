@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'screens/home_screen.dart';
 import 'theme/app_theme.dart';
 import 'screens/movie_list_screen.dart';
-import 'providers/favorites_provider.dart';
+import 'providers/movie_lists_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 
