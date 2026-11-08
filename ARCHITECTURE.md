@@ -7,9 +7,9 @@
 | Screen | What the user does |
 |---|---|
 | **Home** | Sees popular movies. Types in the search field and presses Enter to search (empty search → popular again). Taps a heart to add/remove a favorite. |
-| **Favorites** | Sees only the movies they marked. Can remove a favorite. |
+| **Favorites / Watchlist / Watched** | Sees the movies marked in that list. Can unmark them. A movie can be in any combination of the three lists. |
 
-Navigation: a bottom bar with two tabs (Home, Favorites). `IndexedStack` keeps both screens alive, so switching tabs does not lose the search.
+Navigation: a bottom bar with four tabs (Home, Favorites, Watchlist, Watched). `IndexedStack` keeps the screens alive, so switching tabs does not lose the search.
 
 ## 2. Layers
 
@@ -45,7 +45,7 @@ Navigation: a bottom bar with two tabs (Home, Favorites). `IndexedStack` keeps b
 | `searchQueryProvider` | `NotifierProvider<…, String>` | The search text (`setQuery`, trimmed) | `moviesProvider`; Home writes it |
 | `languageProvider` | `NotifierProvider<…, String>` | TMDB language, `he-IL` or `en-US` (`toggleLanguage`) | `moviesProvider`, Home button label |
 | `moviesProvider` | `FutureProvider<List<Movie>>` | Popular or search results in the chosen language | Home (`.when`) |
-| `favoritesProvider` | `NotifierProvider<…, List<Movie>>` | Favorite movies (`toggle`, `isFavorite`). Loads from `prefsProvider` in `build`, saves on every `toggle` | `MovieCard`, Favorites screen |
+| `favoritesProvider`, `watchlistProvider`, `watchedProvider` | `NotifierProvider<MovieListNotifier, List<Movie>>` | Three independent lists of the same class, each with its own storage key (`toggle`). Loads from `prefsProvider` in `build`, saves on every `toggle` | `MovieCard`, `MovieListScreen` |
 | `prefsProvider` | `Provider<SharedPreferences>` | Device storage. No default: `main` opens it (`await`) and injects it with `overrideWithValue` | `favoritesProvider` |
 
 `MainApp` keeps only `currentTab` in `setState`. It is local UI state, so it does not need a provider.
@@ -60,13 +60,13 @@ lib/
 ├── services/
 │   └── movie_api.dart            class MovieApi: getPopularMovies(language), searchMovies(query, language)
 ├── providers/
-│   ├── favorites_provider.dart   FavoritesNotifier + favoritesProvider
+│   ├── favorites_provider.dart   MovieListNotifier + favorites, watchlist and watched providers
 │   ├── language_provider.dart    LanguageNotifier + languageProvider
 │   ├── storage_provider.dart     prefsProvider (overridden in main)
 │   └── search_provider.dart      searchQueryProvider, movieApiProvider, moviesProvider
 ├── screens/
 │   ├── home_screen.dart          search field + language button + MovieGrid
-│   └── favorites_screen.dart     MovieGrid of favorites, or an empty message
+│   └── movie_list_screen.dart    any list provider as a MovieGrid, or an empty message
 ├── widgets/
 │   ├── movie_grid.dart           GridView.extent shared by both screens
 │   └── movie_card.dart           poster, heart, title, year
@@ -96,7 +96,8 @@ tap heart  → ref.read(favoritesProvider.notifier).toggle(movie)
            → state = new list (added or removed by movie.id)
            → _save(): the list is written to shared_preferences
            → every widget that watches favoritesProvider rebuilds:
-             MovieCard (filled heart + green border), Favorites screen
+             MovieCard (filled heart + green border), MovieListScreen
+Watchlist and Watched work the same way, through the buttons on the poster.
 ```
 Favorites are compared by `id`, not by object, because every API call creates new `Movie` objects.
 
@@ -119,7 +120,8 @@ flutter test
 | State | Riverpod 3 (started with `setState`, moved in step 7) | Removes prop drilling, and allows overriding providers in tests |
 | Async UI | `FutureProvider` + `AsyncValue.when` | Loading, error and data in one place, refetches when the search changes |
 | Service | A class, injected through `movieApiProvider` | Can be replaced by a fake in tests |
-| Navigation | `BottomNavigationBar` + `IndexedStack`, no router | Two screens. GoRouter only if deep links are needed |
+| Lists | One `MovieListNotifier` class, three providers, three separate lists (not one status field) | A movie can be favorite, watched and on the watchlist in any combination |
+| Navigation | `BottomNavigationBar` (fixed, 4 tabs) + `IndexedStack`, no router | Few screens. GoRouter only if deep links are needed |
 | Favorites storage | `shared_preferences`, a list of JSON strings under `favorites` (`Movie.toJson` / `fromJson`) | One small list, no queries needed. Cloud (Supabase + login) later, by replacing what `prefsProvider` holds |
 | Opening storage | `await` in `main`, then `overrideWithValue` | `build` must return at once and cannot wait for storage to open |
 
@@ -138,4 +140,4 @@ flutter run -d chrome --dart-define-from-file=env.json
 
 ## 10. Not now
 
-UI translation + RTL (the same `languageProvider` will set the app locale), cloud sync, watched / want-to-watch lists, TV series, genres, a retry button, more tests (search, favorites toggle).
+UI translation + RTL (the same `languageProvider` will set the app locale), cloud sync, TV series, genres, a retry button, more tests (search, favorites toggle).

@@ -3,11 +3,13 @@ import '../models/movie.dart';
 import 'dart:convert';
 import 'storage_provider.dart';
 
-class FavoritesNotifier extends Notifier<List<Movie>> {
+class MovieListNotifier extends Notifier<List<Movie>> {
+  MovieListNotifier(this.storageKey);
+  final String storageKey;
   @override
   List<Movie> build() {
     final prefs = ref.read(prefsProvider);
-    final texts = prefs.getStringList('favorites') ?? [];
+    final texts = prefs.getStringList(storageKey) ?? [];
     return texts.map((text) => Movie.fromJson(jsonDecode(text))).toList();
   }
 
@@ -24,8 +26,17 @@ class FavoritesNotifier extends Notifier<List<Movie>> {
   void _save() {
     final prefs = ref.read(prefsProvider);
     final texts = state.map((movie) => jsonEncode(movie.toJson())).toList();
-    prefs.setStringList('favorites', texts);
+    prefs.setStringList(storageKey, texts);
   }
 }
+final favoritesProvider = NotifierProvider<MovieListNotifier, List<Movie>>(
+  () => MovieListNotifier('favorites'),
+);
 
-final favoritesProvider = NotifierProvider<FavoritesNotifier, List<Movie>>(FavoritesNotifier.new);
+final watchedProvider = NotifierProvider<MovieListNotifier, List<Movie>>(
+  () => MovieListNotifier('watched'),
+);
+
+final watchlistProvider = NotifierProvider<MovieListNotifier, List<Movie>>(
+  () => MovieListNotifier('watchlist'),
+);

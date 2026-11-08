@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:movie_app/providers/storage_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'screens/home_screen.dart';
-import 'screens/favorites_screen.dart';
 import 'theme/app_theme.dart';
+import 'screens/movie_list_screen.dart';
+import 'providers/favorites_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 
@@ -31,7 +32,10 @@ class _MainAppState extends State<MainApp> {
 	Widget build(BuildContext context) {
 		final screens = [
 			const HomeScreen(),   // 0
-			const FavoritesScreen(),   // 1
+			MovieListScreen(provider: favoritesProvider, emptyMessage: 'No favorites yet.'),
+			MovieListScreen(provider: watchlistProvider, emptyMessage: 'Nothing to watch yet.'),
+			MovieListScreen(provider: watchedProvider , emptyMessage: 'Nothing watched yet.'),
+
 		];
 		return MaterialApp(
       debugShowCheckedModeBanner: false,   // בלי הסרט האדום DEBUG
@@ -40,6 +44,7 @@ class _MainAppState extends State<MainApp> {
 					body: IndexedStack(index: currentTab, children: screens),
 					bottomNavigationBar: BottomNavigationBar(
 						currentIndex: currentTab,
+            type: BottomNavigationBarType.fixed,
 						onTap: (index) {
 							setState(() {
 								currentTab = index;
@@ -48,6 +53,8 @@ class _MainAppState extends State<MainApp> {
 						items: const [
 							BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
 							BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'Favorites'),
+              BottomNavigationBarItem(icon: Icon(Icons.bookmark), label: 'Watchlist'),
+              BottomNavigationBarItem(icon: Icon(Icons.check_circle), label: 'Watched'),
 						],
 				),
 			),

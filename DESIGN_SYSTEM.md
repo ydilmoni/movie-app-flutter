@@ -59,7 +59,9 @@ These values are written directly in the widgets. Only colors are tokens in code
 
 **Search field:** filled `surfaceHigh`, pill radius, hint "Search movies...", no border. Search runs on Enter.
 
-**Bottom bar:** `surface` color, two tabs (Home, Favorites). Selected = `accent`, unselected = `textSecondary`.
+**Poster buttons:** bookmark (Want to watch) top-left, check circle (Watched) top-right, opposite corners so they are not confused. Icon 22 on a `black54` circle. Not selected: outline, `white70`. Selected: filled, `accent`. Each has a tooltip.
+
+**Bottom bar:** `surface` color, four fixed tabs (Home, Favorites, Watchlist, Watched). Selected = `accent`, unselected = `textSecondary`.
 
 **States**
 | State | Look |
@@ -67,7 +69,7 @@ These values are written directly in the widgets. Only colors are tokens in code
 | Loading | Centered spinner in `accent` |
 | Error | Centered text `Error: …` |
 | No results | Empty grid |
-| No favorites | Centered text "No favorites yet." |
+| Empty list | Centered text: "No favorites yet." / "Nothing to watch yet." / "Nothing watched yet." |
 
 ## 6. In Flutter
 
