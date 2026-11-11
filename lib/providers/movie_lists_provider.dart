@@ -13,22 +13,26 @@ class MovieListNotifier extends Notifier<List<Movie>> {
     return texts.map((text) => Movie.fromJson(jsonDecode(text))).toList();
   }
 
-  bool contains(Movie movie) => state.any((m) => m.id == movie.id);
+  bool contains(Movie movie) => state.any((m) => m.isSame(movie));
 
   void toggle(Movie movie) {
-    if (contains (movie)) {
-      state = state.where((m) => m.id != movie.id).toList();   // רשימה חדשה, בלי הסרט
+    if (contains(movie)) {
+      state = state
+          .where((m) => !m.isSame(movie))
+          .toList(); // רשימה חדשה, בלי הסרט
     } else {
-      state = [...state, movie];                               // רשימה חדשה, עם הסרט
+      state = [...state, movie]; // רשימה חדשה, עם הסרט
     }
     _save();
   }
+
   void _save() {
     final prefs = ref.read(prefsProvider);
     final texts = state.map((movie) => jsonEncode(movie.toJson())).toList();
     prefs.setStringList(storageKey, texts);
   }
 }
+
 final favoritesProvider = NotifierProvider<MovieListNotifier, List<Movie>>(
   () => MovieListNotifier('favorites'),
 );

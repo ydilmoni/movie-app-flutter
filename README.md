@@ -62,7 +62,8 @@ final container = ProviderContainer(
 flutter test
 ```
 
-`test/movies_test.dart` checks that `moviesProvider` uses the injected API, with a fake that returns fixed movies.
+- `test/movies_provider_test.dart` checks that `moviesProvider` uses the injected API, with a fake that returns fixed movies.
+- `test/movie_model_test.dart` checks that `Movie.fromJson` reads TV fields (`name`).
 
 ## Project structure
 
@@ -75,5 +76,5 @@ lib/
   screens/                  home_screen, movie_list_screen
   widgets/                  movie_card, movie_grid
   theme/app_theme.dart      colors and ThemeData
-test/movies_test.dart
+test/                       movie_model_test, movies_provider_test
 ```

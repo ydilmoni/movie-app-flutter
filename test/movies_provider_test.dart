@@ -6,12 +6,12 @@ import 'package:movie_app/providers/search_provider.dart';
 
 class FakeMovieApi implements MovieApi {
   @override
-  Future<List<Movie>> getPopularMovies(String language) async {
+  Future<List<Movie>> getPopularMovies(String language, String movieType) async {
     return [Movie(id: 1, title: 'Fake Movie', releaseDate: '2024-01-01')];
   }
 
   @override
-  Future<List<Movie>> searchMovies(String query, String language) async {
+  Future<List<Movie>> searchMovies(String query, String language, String movieType) async {
     return [Movie(id: 2, title: 'Found $query', releaseDate: '2024-01-01')];
   }
 }

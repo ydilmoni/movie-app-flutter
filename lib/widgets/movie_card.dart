@@ -16,11 +16,11 @@ class MovieCard extends ConsumerWidget  {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final favorites = ref.watch(favoritesProvider); 
-    final isFavorite = favorites.any((m) => m.id == movie.id);
+    final isFavorite = favorites.any((m) => m.isSame(movie));
     final watchlist = ref.watch(watchlistProvider);
-    final isInWatchlist = watchlist.any((m) => m.id == movie.id);
+    final isInWatchlist = watchlist.any((m) => m.isSame(movie));
     final watched =  ref.watch(watchedProvider);
-    final isItWatched = watched.any((m) => m.id == movie.id);
+    final isItWatched = watched.any((m) => m.isSame(movie));
 
     final year = movie.releaseDate.length >= 4 ? movie.releaseDate.substring(0, 4) : '';
     return Container(

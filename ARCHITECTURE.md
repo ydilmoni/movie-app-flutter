@@ -1,6 +1,6 @@
 # Architecture — Movie App
 
-> Status: v0.2 · 2026-11-05 · Flutter (web + mobile) · Riverpod 3 · Data: TMDB API
+> Status: v0.3 · 2026-11-11 · Flutter (web + mobile) · Riverpod 3 · Data: TMDB API
 
 ## 1. What the app does
 
@@ -44,7 +44,8 @@ Navigation: a bottom bar with four tabs (Home, Favorites, Watchlist, Watched). `
 | `movieApiProvider` | `Provider<MovieApi>` | The API client | `moviesProvider` |
 | `searchQueryProvider` | `NotifierProvider<…, String>` | The search text (`setQuery`, trimmed) | `moviesProvider`; Home writes it |
 | `languageProvider` | `NotifierProvider<…, String>` | TMDB language, `he-IL` or `en-US` (`toggleLanguage`) | `moviesProvider`, Home button label |
-| `moviesProvider` | `FutureProvider<List<Movie>>` | Popular or search results in the chosen language | Home (`.when`) |
+| `mediaTypeProvider` | `NotifierProvider<…, String>` | `movie` or `tv` (`toggleMediaType`). The value goes straight into the TMDB path (`/movie/popular`, `/tv/popular`). No button yet | `moviesProvider` |
+| `moviesProvider` | `FutureProvider<List<Movie>>` | Popular or search results in the chosen language and media type | Home (`.when`) |
 | `favoritesProvider`, `watchlistProvider`, `watchedProvider` | `NotifierProvider<MovieListNotifier, List<Movie>>` | Three independent lists of the same class, each with its own storage key (`toggle`). Loads from `prefsProvider` in `build`, saves on every `toggle` | `MovieCard`, `MovieListScreen` |
 | `prefsProvider` | `Provider<SharedPreferences>` | Device storage. No default: `main` opens it (`await`) and injects it with `overrideWithValue` | `favoritesProvider` |
 
@@ -58,10 +59,11 @@ lib/
 ├── models/
 │   └── movie.dart
 ├── services/
-│   └── movie_api.dart            class MovieApi: getPopularMovies(language), searchMovies(query, language)
+│   └── movie_api.dart            class MovieApi: getPopularMovies(language, mediaType), searchMovies(query, language, mediaType)
 ├── providers/
 │   ├── movie_lists_provider.dart MovieListNotifier + favorites, watchlist and watched providers
 │   ├── language_provider.dart    LanguageNotifier + languageProvider
+│   ├── media_type_provider.dart  MediaTypeNotifier + mediaTypeProvider (movie / tv)
 │   ├── storage_provider.dart     prefsProvider (overridden in main)
 │   └── search_provider.dart      searchQueryProvider, movieApiProvider, moviesProvider
 ├── screens/
@@ -73,7 +75,8 @@ lib/
 └── theme/
     └── app_theme.dart            AppColors + ThemeData (see DESIGN_SYSTEM.md)
 test/
-└── movies_test.dart              FakeMovieApi + moviesProvider test
+├── movie_model_test.dart         Movie.fromJson (TV fields)
+└── movies_provider_test.dart     FakeMovieApi + moviesProvider test
 ```
 
 ## 5. Data flow
@@ -99,11 +102,11 @@ tap heart  → ref.read(favoritesProvider.notifier).toggle(movie)
              MovieCard (filled heart + green border), MovieListScreen
 Watchlist and Watched work the same way, through the buttons on the poster.
 ```
-Favorites are compared by `id`, not by object, because every API call creates new `Movie` objects.
+List items are compared with `Movie.isSame` (`id` + `mediaType`), not by object, because every API call creates new `Movie` objects, and a movie and a TV show can share the same TMDB `id`.
 
 ## 6. Testing (dependency injection)
 
-`test/movies_test.dart` builds a `ProviderContainer` with
+`test/movies_provider_test.dart` builds a `ProviderContainer` with
 `movieApiProvider.overrideWithValue(FakeMovieApi())`.
 `FakeMovieApi implements MovieApi` and returns fixed movies, so the test runs the real `moviesProvider` code with no network and known data.
 
@@ -140,4 +143,4 @@ flutter run -d chrome --dart-define-from-file=env.json
 
 ## 10. Not now
 
-UI translation + RTL (the same `languageProvider` will set the app locale), cloud sync, TV series, genres, a retry button, more tests (search, favorites toggle).
+UI translation + RTL (the same `languageProvider` will set the app locale), cloud sync, the Movies/Series switch (data layer is ready), genres, a retry button, more tests (search, favorites toggle).
