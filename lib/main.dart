@@ -7,6 +7,8 @@ import 'screens/movie_list_screen.dart';
 import 'providers/movie_lists_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'widgets/language_button.dart';
+import 'providers/language_provider.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 
 
@@ -18,19 +20,20 @@ Future<void> main() async {                         // main שמותר לו לח
     child: const MainApp(),
   ));
 }
-class MainApp extends StatefulWidget {
+class MainApp extends ConsumerStatefulWidget {
 	const MainApp({super.key});
 
   @override
-  State<MainApp> createState() => _MainAppState();
+  ConsumerState<MainApp> createState() => _MainAppState();
 }
 
-class _MainAppState extends State<MainApp> {
+class _MainAppState extends ConsumerState<MainApp> {
 
 	int currentTab = 0;   // 0 = Home, 1 = Favorites
 	
 	@override
 	Widget build(BuildContext context) {
+    final language = ref.watch(languageProvider);
 		final screens = [
 			const HomeScreen(),   // 0
 			MovieListScreen(provider: favoritesProvider, emptyMessage: 'No favorites yet.'),
@@ -41,6 +44,9 @@ class _MainAppState extends State<MainApp> {
 		return MaterialApp(
       debugShowCheckedModeBanner: false,   // בלי הסרט האדום DEBUG
 			theme: appTheme,
+      locale: language == 'he-IL' ? const Locale('he') : const Locale('en'),
+      supportedLocales: const [Locale('he'), Locale('en')],
+      localizationsDelegates: GlobalMaterialLocalizations.delegates,
 			home: Scaffold(
           appBar: AppBar(
             title: const Text('Movie App'),

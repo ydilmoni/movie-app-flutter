@@ -47,6 +47,8 @@ Navigation: a bottom bar with four tabs (Home, Favorites, Watchlist, Watched). `
 | `mediaTypeProvider` | `NotifierProvider<…, String>` | `movie` or `tv` (`toggleMediaType`). The value goes straight into the TMDB path (`/movie/popular`, `/tv/popular`). Set by the `Movies \| Series` buttons (`setMediaType`) | `moviesProvider`, Home |
 | `moviesProvider` | `FutureProvider<List<Movie>>` | Popular or search results in the chosen language and media type | Home (`.when`) |
 | `favoritesProvider`, `watchlistProvider`, `watchedProvider` | `NotifierProvider<MovieListNotifier, List<Movie>>` | Three independent lists of the same class, each with its own storage key (`toggle`). Loads from `prefsProvider` in `build`, saves on every `toggle` | `MovieCard`, `MovieListScreen` |
+| `detailsProvider` | `FutureProvider.autoDispose.family<MediaDetails, Movie>` | Overview, genres and collection id of one movie / TV show (`/{mediaType}/{id}`) | `DetailsScreen` |
+| `collectionProvider` | `FutureProvider.autoDispose.family<List<Movie>, int>` | The movies of one collection, sorted by release date (`/collection/{id}`) | `CollectionRow` |
 | `prefsProvider` | `Provider<SharedPreferences>` | Device storage. No default: `main` opens it (`await`) and injects it with `overrideWithValue` | `favoritesProvider` |
 
 `MainApp` keeps only `currentTab` in `setState`. It is local UI state, so it does not need a provider.
@@ -57,7 +59,8 @@ Navigation: a bottom bar with four tabs (Home, Favorites, Watchlist, Watched). `
 lib/
 ├── main.dart                     opens SharedPreferences, ProviderScope, MaterialApp, theme, bottom navigation
 ├── models/
-│   └── movie.dart
+│   ├── movie.dart
+│   └── media_details.dart        overview, genres, collectionId (details screen only)
 ├── services/
 │   └── movie_api.dart            class MovieApi: getPopularMovies(language, mediaType), searchMovies(query, language, mediaType)
 ├── providers/
@@ -68,11 +71,13 @@ lib/
 │   └── search_provider.dart      searchQueryProvider, movieApiProvider, moviesProvider
 ├── screens/
 │   ├── home_screen.dart          search field + Movies | Series buttons + MovieGrid
-│   └── movie_list_screen.dart    any list provider as a MovieGrid, or an empty message
+│   ├── movie_list_screen.dart    any list provider as a MovieGrid, or an empty message
+│   └── details_screen.dart       poster, title, genres, overview, collection row (opened with Navigator.push)
 ├── widgets/
 │   ├── movie_grid.dart           GridView.extent shared by both screens
 │   ├── movie_card.dart           poster, heart, title, year
-│   └── language_button.dart      🌐 menu in the top bar (Hebrew / English)
+│   ├── language_button.dart      🌐 menu in the top bar (Hebrew / English)
+│   └── collection_row.dart       horizontal row of MovieCards for a collection
 └── theme/
     └── app_theme.dart            AppColors + ThemeData (see DESIGN_SYSTEM.md)
 test/
@@ -146,4 +151,4 @@ flutter run -d chrome --dart-define-from-file=env.json
 
 ## 10. Not now
 
-UI translation + RTL (the same `languageProvider` will set the app locale), cloud sync, a details screen + TV season/episode tracking, filtering the lists by movie/TV, genres, a retry button, more tests (search, favorites toggle).
+UI translation + RTL (the same `languageProvider` will set the app locale), cloud sync, TV season/episode tracking, the details screen redesign (see the plan), filtering the lists by movie/TV, genres, a retry button, more tests (search, favorites toggle).
