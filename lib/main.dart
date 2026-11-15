@@ -6,6 +6,7 @@ import 'theme/app_theme.dart';
 import 'screens/movie_list_screen.dart';
 import 'providers/movie_lists_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'widgets/language_button.dart';
 
 
 
@@ -41,6 +42,10 @@ class _MainAppState extends State<MainApp> {
       debugShowCheckedModeBanner: false,   // בלי הסרט האדום DEBUG
 			theme: appTheme,
 			home: Scaffold(
+          appBar: AppBar(
+            title: const Text('Movie App'),
+            actions: const [LanguageButton()],
+          ),
 					body: IndexedStack(index: currentTab, children: screens),
 					bottomNavigationBar: BottomNavigationBar(
 						currentIndex: currentTab,

@@ -61,6 +61,10 @@ These values are written directly in the widgets. Only colors are tokens in code
 
 **Poster buttons:** bookmark (Want to watch) top-left, check circle (Watched) top-right, opposite corners so they are not confused. Icon 22 on a `black54` circle. Not selected: outline, `white70`. Selected: filled, `accent`. Each has a tooltip.
 
+**Top bar:** `AppBar` with the title "Movie App" and, on the right, the language menu: 🌐 + `HE`/`EN` (current language), opens a menu with Hebrew / English.
+
+**Movies | Series:** `SegmentedButton` in the search row, right of the field, text labels, no check icon. The language moved to the top bar to leave the search field ~165px on a phone.
+
 **Bottom bar:** `surface` color, four fixed tabs (Home, Favorites, Watchlist, Watched). Selected = `accent`, unselected = `textSecondary`.
 
 **States**

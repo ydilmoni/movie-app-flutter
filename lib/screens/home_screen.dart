@@ -3,11 +3,13 @@
   import 'package:movie_app/providers/language_provider.dart';
   import '../providers/search_provider.dart';
   import '../widgets/movie_grid.dart';
+  import '../providers/media_type_provider.dart';
   class HomeScreen extends ConsumerWidget {
     const HomeScreen({super.key});
     @override
     Widget build(BuildContext context, WidgetRef ref) {
       final language = ref.watch(languageProvider);
+      final mediaType = ref.watch(mediaTypeProvider);
       final moviesAsync = ref.watch(moviesProvider);
 
       return Column(
@@ -22,9 +24,17 @@
                   },
                 )
               ),
-              TextButton(onPressed: () => ref.read(languageProvider.notifier).toggleLanguage(),
-              child: Text(language == 'he-IL' ? 'English' : 'עברית'
-              ))
+              SegmentedButton<String>(
+                segments: const [
+                  ButtonSegment(value: 'movie', label: Text('Movies')),
+                  ButtonSegment(value: 'tv', label: Text('Series')),
+                ],
+                selected: {mediaType},
+                onSelectionChanged: (selection) =>
+                    ref.read(mediaTypeProvider.notifier).setMediaType(selection.first),
+                showSelectedIcon: false,
+              ),
+              
             ],
           ),
           Expanded(

@@ -43,8 +43,8 @@ Navigation: a bottom bar with four tabs (Home, Favorites, Watchlist, Watched). `
 |---|---|---|---|
 | `movieApiProvider` | `Provider<MovieApi>` | The API client | `moviesProvider` |
 | `searchQueryProvider` | `NotifierProvider<…, String>` | The search text (`setQuery`, trimmed) | `moviesProvider`; Home writes it |
-| `languageProvider` | `NotifierProvider<…, String>` | TMDB language, `he-IL` or `en-US` (`toggleLanguage`) | `moviesProvider`, Home button label |
-| `mediaTypeProvider` | `NotifierProvider<…, String>` | `movie` or `tv` (`toggleMediaType`). The value goes straight into the TMDB path (`/movie/popular`, `/tv/popular`). No button yet | `moviesProvider` |
+| `languageProvider` | `NotifierProvider<…, String>` | TMDB language, `he-IL` or `en-US` (`setLanguage`) | `moviesProvider`, `LanguageButton` |
+| `mediaTypeProvider` | `NotifierProvider<…, String>` | `movie` or `tv` (`toggleMediaType`). The value goes straight into the TMDB path (`/movie/popular`, `/tv/popular`). Set by the `Movies \| Series` buttons (`setMediaType`) | `moviesProvider`, Home |
 | `moviesProvider` | `FutureProvider<List<Movie>>` | Popular or search results in the chosen language and media type | Home (`.when`) |
 | `favoritesProvider`, `watchlistProvider`, `watchedProvider` | `NotifierProvider<MovieListNotifier, List<Movie>>` | Three independent lists of the same class, each with its own storage key (`toggle`). Loads from `prefsProvider` in `build`, saves on every `toggle` | `MovieCard`, `MovieListScreen` |
 | `prefsProvider` | `Provider<SharedPreferences>` | Device storage. No default: `main` opens it (`await`) and injects it with `overrideWithValue` | `favoritesProvider` |
@@ -67,11 +67,12 @@ lib/
 │   ├── storage_provider.dart     prefsProvider (overridden in main)
 │   └── search_provider.dart      searchQueryProvider, movieApiProvider, moviesProvider
 ├── screens/
-│   ├── home_screen.dart          search field + language button + MovieGrid
+│   ├── home_screen.dart          search field + Movies | Series buttons + MovieGrid
 │   └── movie_list_screen.dart    any list provider as a MovieGrid, or an empty message
 ├── widgets/
 │   ├── movie_grid.dart           GridView.extent shared by both screens
-│   └── movie_card.dart           poster, heart, title, year
+│   ├── movie_card.dart           poster, heart, title, year
+│   └── language_button.dart      🌐 menu in the top bar (Hebrew / English)
 └── theme/
     └── app_theme.dart            AppColors + ThemeData (see DESIGN_SYSTEM.md)
 test/
@@ -88,7 +89,9 @@ Home opens        → ref.watch(moviesProvider)
 Enter in search   → ref.read(searchQueryProvider.notifier).setQuery(text)
                   → searchQueryProvider changes → moviesProvider runs again
                   → api.searchMovies(text, language)   (empty text → popular)
-Language button   → ref.read(languageProvider.notifier).toggleLanguage()
+Movies | Series  → ref.read(mediaTypeProvider.notifier).setMediaType('tv')
+                  → moviesProvider runs again: /tv/popular or /search/tv
+Language menu     → ref.read(languageProvider.notifier).setLanguage('en-US')
                   → moviesProvider runs again with the new language
 .when             → loading: spinner · error: message · data: MovieGrid
 ```
@@ -143,4 +146,4 @@ flutter run -d chrome --dart-define-from-file=env.json
 
 ## 10. Not now
 
-UI translation + RTL (the same `languageProvider` will set the app locale), cloud sync, the Movies/Series switch (data layer is ready), genres, a retry button, more tests (search, favorites toggle).
+UI translation + RTL (the same `languageProvider` will set the app locale), cloud sync, a details screen + TV season/episode tracking, filtering the lists by movie/TV, genres, a retry button, more tests (search, favorites toggle).

@@ -4,6 +4,10 @@ class MediaTypeNotifier extends Notifier<String> {
   @override
   String build() => 'movie';
 
+  void setMediaType(String mediaType) {
+    state = mediaType;
+  }
+
   void toggleMediaType() {
     state = state == 'movie' ? 'tv' : 'movie';
   }

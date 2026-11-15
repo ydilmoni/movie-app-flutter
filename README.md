@@ -16,7 +16,8 @@ The grid adapts to the screen width (landscape):
 - Popular movies from [TMDB](https://www.themoviedb.org/)
 - Search (press Enter; an empty search returns to popular)
 - Three independent lists: Favorites, Watchlist, Watched. Mark a movie from its card, see each list in its own tab. Saved on the device (`shared_preferences`), so they survive a restart
-- Hebrew / English movie titles: a button next to the search field switches the TMDB language and refetches
+- Movies and TV series: `Movies | Series` buttons next to the search field. A movie and a series with the same TMDB id are kept apart in the lists
+- Hebrew / English titles: a 🌐 menu in the top bar switches the TMDB language and refetches
 - Loading and error states
 - Dark theme with a single accent color ([DESIGN_SYSTEM.md](DESIGN_SYSTEM.md))
 

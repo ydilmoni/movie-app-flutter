@@ -4,6 +4,11 @@ class LanguageNotifier extends Notifier<String> {
   @override
   String build() => 'he-IL';
 
+
+  void setLanguage(String language){
+    state = language;
+  }
+
   void toggleLanguage() {
     state = state == 'he-IL' ? 'en-US' : 'he-IL';
   }
