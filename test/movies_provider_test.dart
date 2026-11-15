@@ -24,7 +24,7 @@ class FakeMovieApi implements MovieApi {
   @override
   Future<MediaDetails> getDetails(int id, String mediaType, String language) async {
     lastMediaType = mediaType;
-    return MediaDetails(overview: 'Fake overview', genres: ['Drama'], collectionId: null);
+    return MediaDetails(overview: 'Fake overview', genres: ['Drama'], collectionId: null, seasons: []);
   }
 
   @override

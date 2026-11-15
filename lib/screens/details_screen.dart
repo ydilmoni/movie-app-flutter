@@ -48,7 +48,16 @@ class DetailsScreen extends ConsumerWidget {
                 if (details.collectionId != null) ...[
                   const SizedBox(height: 16),
                   CollectionRow(collectionId: details.collectionId!),
-                ],               
+                ],
+                if (details.seasons.isNotEmpty) ...[
+                  const SizedBox(height: 16),
+                  for (final season in details.seasons)
+                    ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      title: Text(season.name),
+                      subtitle: Text('${season.episodeCount} episodes'),
+                    ),
+                ],          
               ],
             ),
           ),
