@@ -1,5 +1,6 @@
 import 'package:movie_app/models/movie.dart';
 import 'package:movie_app/models/media_details.dart';
+import 'package:movie_app/models/episode.dart';
 import 'package:movie_app/services/movie_api.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -30,6 +31,11 @@ class FakeMovieApi implements MovieApi {
   @override
   Future<List<Movie>> getCollection(int id, String language) async {
     return [Movie(id: 3, title: 'Fake Part 1', releaseDate: '2001-01-01')];
+  }
+
+  @override
+  Future<List<Episode>> getSeason(int tvId, int seasonNumber, String language) async {
+    return [Episode(number: 1, name: 'Fake Pilot', airDate: '2020-01-01')];
   }
 }
 

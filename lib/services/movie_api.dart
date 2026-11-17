@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:movie_app/models/media_details.dart';
 import '../models/movie.dart';
+import '../models/episode.dart';
 
 const _apiKey = String.fromEnvironment('TMDB_KEY');
 const _baseUrl = 'https://api.themoviedb.org/3';
@@ -77,4 +78,19 @@ class MovieApi {
     movies.sort((a, b) => a.releaseDate.compareTo(b.releaseDate));
     return movies;
   }
+
+    Future<List<Episode>> getSeason(int tvId, int seasonNumber, String language) async {
+      final response = await http.get(
+        Uri.parse(
+          '$_baseUrl/tv/$tvId/season/$seasonNumber?api_key=$_apiKey&language=$language',
+        ),
+      );
+      if (response.statusCode != 200) {
+        throw Exception('Failed to fetch episodes for this season');
+      }
+      final data = jsonDecode(response.body);
+      final List results = data['episodes'];
+      final episodes = results.map((json) => Episode.fromJson(json)).toList();
+      return episodes;
+    }
 }

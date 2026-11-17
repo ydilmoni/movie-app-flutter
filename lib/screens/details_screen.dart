@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/details_provider.dart';
 import '../theme/app_theme.dart';
 import '../widgets/collection_row.dart';
+import 'season_screen.dart';
+import '../widgets/seasons_section.dart';
 
 class DetailsScreen extends ConsumerWidget {
   final Movie movie;
@@ -51,12 +53,15 @@ class DetailsScreen extends ConsumerWidget {
                 ],
                 if (details.seasons.isNotEmpty) ...[
                   const SizedBox(height: 16),
-                  for (final season in details.seasons)
-                    ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      title: Text(season.name),
-                      subtitle: Text('${season.episodeCount} episodes'),
+                  SeasonsSection(
+                    seasons: details.seasons,
+                    onSeasonTap: (season) => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SeasonScreen(tvId: movie.id, season: season),
+                      ),
                     ),
+                  ),
                 ],          
               ],
             ),
