@@ -17,7 +17,7 @@ The grid adapts to the screen width (landscape):
 - Search (press Enter; an empty search returns to popular)
 - Three independent lists: Favorites, Watchlist, Watched. Mark a movie from its card, see each list in its own tab. Saved on the device (`shared_preferences`), so they survive a restart
 - Movies and TV series: `Movies | Series` buttons next to the search field. A movie and a series with the same TMDB id are kept apart in the lists
-- Details screen: tap a poster to see genres and overview. A movie that is part of a collection shows the other parts in release order
+- Details screen: tap a poster to see genres and overview. A movie that is part of a collection shows the other parts in release order. A TV show shows its years (`1989–Today`), season tiles, and the episodes of the chosen season. Phone and wide layouts
 - Hebrew / English: a 🌐 menu in the top bar switches the TMDB language, and the whole app switches to right-to-left in Hebrew
 - Loading and error states
 - Dark theme with a single accent color ([DESIGN_SYSTEM.md](DESIGN_SYSTEM.md))
@@ -75,8 +75,8 @@ lib/
   models/movie.dart         Movie + fromJson
   services/movie_api.dart   MovieApi (TMDB calls)
   providers/                favorites, search, movies, movieApi, language, storage
-  screens/                  home_screen, movie_list_screen
-  widgets/                  movie_card, movie_grid
+  screens/                  home_screen, movie_list_screen, details_screen
+  widgets/                  movie_card, movie_grid, seasons_section, season/episode tiles, list_buttons, expandable_text
   theme/app_theme.dart      colors and ThemeData
 test/                       movie_model_test, movies_provider_test
 ```

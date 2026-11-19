@@ -5,16 +5,23 @@ import '../utils/date_format.dart';
 
 class SeasonTile extends StatelessWidget {
   final Season season;
-  final VoidCallback onTap;       
-  static const width = 130.0;                            // (A)
+  final VoidCallback onTap;
+  final bool isSelected;
+  static const width = 130.0;
 
-  const SeasonTile({super.key, required this.season, required this.onTap});
+
+  const SeasonTile({super.key, required this.season, required this.onTap, required this.isSelected});
 
   @override
   Widget build(BuildContext context) {
     return Material(                                          // (B)
       color: AppColors.surfaceHigh,
-      borderRadius: BorderRadius.circular(8),
+        shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+        side: isSelected
+            ? const BorderSide(color: AppColors.accent, width: 2)
+            : BorderSide.none,
+      ),
       child: InkWell(                                         // (C)
         borderRadius: BorderRadius.circular(8),
         onTap: onTap,

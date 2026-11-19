@@ -47,11 +47,12 @@ Navigation: a bottom bar with four tabs (Home, Favorites, Watchlist, Watched). `
 | `mediaTypeProvider` | `NotifierProvider<…, String>` | `movie` or `tv` (`toggleMediaType`). The value goes straight into the TMDB path (`/movie/popular`, `/tv/popular`). Set by the `Movies \| Series` buttons (`setMediaType`) | `moviesProvider`, Home |
 | `moviesProvider` | `FutureProvider<List<Movie>>` | Popular or search results in the chosen language and media type | Home (`.when`) |
 | `favoritesProvider`, `watchlistProvider`, `watchedProvider` | `NotifierProvider<MovieListNotifier, List<Movie>>` | Three independent lists of the same class, each with its own storage key (`toggle`). Loads from `prefsProvider` in `build`, saves on every `toggle` | `MovieCard`, `MovieListScreen` |
-| `detailsProvider` | `FutureProvider.autoDispose.family<MediaDetails, Movie>` | Overview, genres and collection id of one movie / TV show (`/{mediaType}/{id}`) | `DetailsScreen` |
+| `detailsProvider` | `FutureProvider.autoDispose.family<MediaDetails, Movie>` | Overview, genres, collection id, seasons, last air date and in-production flag of one movie / TV show (`/{mediaType}/{id}`) | `DetailsScreen` |
 | `collectionProvider` | `FutureProvider.autoDispose.family<List<Movie>, int>` | The movies of one collection, sorted by release date (`/collection/{id}`) | `CollectionRow` |
+| `seasonProvider` | `FutureProvider.autoDispose.family<List<Episode>, ({int tvId, int season})>` | The episodes of one season. The key is a record, so each show + season pair gets its own cached result (`/tv/{id}/season/{n}`) | `SeasonsSection` |
 | `prefsProvider` | `Provider<SharedPreferences>` | Device storage. No default: `main` opens it (`await`) and injects it with `overrideWithValue` | `favoritesProvider` |
 
-`MainApp` keeps only `currentTab` in `setState`. It is local UI state, so it does not need a provider.
+`MainApp` keeps only `currentTab` in `setState`. `SeasonsSection` keeps `showAll` and `selectedNumber`, and `ExpandableText` keeps `isExpanded`. All of these are local UI state, so they do not need a provider.
 
 ## 4. Folder structure
 
@@ -60,9 +61,10 @@ lib/
 ├── main.dart                     opens SharedPreferences, ProviderScope, MaterialApp, theme, bottom navigation
 ├── models/
 │   ├── movie.dart
-│   └── media_details.dart        overview, genres, collectionId (details screen only)
+│   ├── media_details.dart        MediaDetails (overview, genres, collectionId, seasons, lastAirDate, inProduction) + Season
+│   └── episode.dart              Episode (number, name, airDate)
 ├── services/
-│   └── movie_api.dart            class MovieApi: getPopularMovies(language, mediaType), searchMovies(query, language, mediaType)
+│   └── movie_api.dart            class MovieApi: getPopularMovies(language, mediaType), searchMovies(query, language, mediaType), getDetails, getCollection, getSeason
 ├── providers/
 │   ├── movie_lists_provider.dart MovieListNotifier + favorites, watchlist and watched providers
 │   ├── language_provider.dart    LanguageNotifier + languageProvider
@@ -72,12 +74,19 @@ lib/
 ├── screens/
 │   ├── home_screen.dart          search field + Movies | Series buttons + MovieGrid
 │   ├── movie_list_screen.dart    any list provider as a MovieGrid, or an empty message
-│   └── details_screen.dart       poster, title, genres, overview, collection row (opened with Navigator.push)
+│   └── details_screen.dart       LayoutBuilder: phone (title, poster + year/genres/buttons, overview below) or wide > 700 (poster beside title row + overview); then collection or seasons
 ├── widgets/
 │   ├── movie_grid.dart           GridView.extent shared by both screens
 │   ├── movie_card.dart           poster, heart, title, year
 │   ├── language_button.dart      🌐 menu in the top bar (Hebrew / English)
-│   └── collection_row.dart       horizontal row of MovieCards for a collection
+│   ├── collection_row.dart       horizontal row of MovieCards for a collection
+│   ├── list_buttons.dart         favorite / watched / watchlist toggles on the details screen
+│   ├── expandable_text.dart      overview limited to 4 lines + More / Less (measured with TextPainter)
+│   ├── seasons_section.dart      season tiles in a Wrap (2 rows + See more), tap a season to show its episodes below with the date range
+│   ├── season_tile.dart          one season: name, episode count, start date
+│   └── episode_tile.dart         one episode: number, name, air date
+├── utils/
+│   └── date_format.dart          formatDate: 2015-12-24 -> 24.12.2015
 └── theme/
     └── app_theme.dart            AppColors + ThemeData (see DESIGN_SYSTEM.md)
 test/
@@ -151,4 +160,4 @@ flutter run -d chrome --dart-define-from-file=env.json
 
 ## 10. Not now
 
-UI translation + RTL (the same `languageProvider` will set the app locale), cloud sync, TV season/episode tracking, the details screen redesign (see the plan), filtering the lists by movie/TV, genres, a retry button, more tests (search, favorites toggle).
+UI translation (ARB files; RTL already follows `languageProvider`), cloud sync, marking seasons and episodes in the three lists (planned: episode-level watched, filtered series view from a list), filtering the lists by movie/TV, genres, a retry button, more tests (search, favorites toggle).

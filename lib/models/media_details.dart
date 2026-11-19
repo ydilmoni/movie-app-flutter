@@ -3,22 +3,26 @@ class MediaDetails {
   final List<String> genres;
   final int? collectionId;
   final List<Season> seasons;
+  final String lastAirDate;
+  final bool inProduction;
 
   MediaDetails({
     required this.overview,
     required this.genres,
     required this.collectionId,
     required this.seasons,
+    this.lastAirDate = '',                                           // (A)
+    this.inProduction = false,
   });
 
   factory MediaDetails.fromJson(Map<String, dynamic> json) {
     return MediaDetails(
-      overview: json['overview'] ?? "",
+      overview: json['overview'] ?? '',
       genres: (json['genres'] as List).map((g) => g['name'] as String).toList(),
       collectionId: json['belongs_to_collection']?['id'],
-      seasons: (json['seasons'] as List? ?? [])
-          .map((s) => Season.fromJson(s))
-          .toList(),
+      seasons: (json['seasons'] as List? ?? []).map((s) => Season.fromJson(s)).toList(),
+      lastAirDate: json['last_air_date'] ?? '',                      // (B)
+      inProduction: json['in_production'] ?? false,
     );
   }
 }
