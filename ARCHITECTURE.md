@@ -50,6 +50,7 @@ Navigation: a bottom bar with four tabs (Home, Favorites, Watchlist, Watched). `
 | `detailsProvider` | `FutureProvider.autoDispose.family<MediaDetails, Movie>` | Overview, genres, collection id, seasons, last air date and in-production flag of one movie / TV show (`/{mediaType}/{id}`) | `DetailsScreen` |
 | `collectionProvider` | `FutureProvider.autoDispose.family<List<Movie>, int>` | The movies of one collection, sorted by release date (`/collection/{id}`) | `CollectionRow` |
 | `seasonProvider` | `FutureProvider.autoDispose.family<List<Episode>, ({int tvId, int season})>` | The episodes of one season. The key is a record, so each show + season pair gets its own cached result (`/tv/{id}/season/{n}`) | `SeasonsSection` |
+| `favoritePartsProvider`, `watchlistPartsProvider`, `watchedPartsProvider` | `NotifierProvider<PartMarksNotifier, List<PartMark>>` | Marks on parts of a series, saved in shared_preferences. Watched is stored per episode only; a season's watched state is computed from its episodes (`4/22`), so the two never disagree | `PartButtons`, `SeasonTile` |
 | `prefsProvider` | `Provider<SharedPreferences>` | Device storage. No default: `main` opens it (`await`) and injects it with `overrideWithValue` | `favoritesProvider` |
 
 `MainApp` keeps only `currentTab` in `setState`. `SeasonsSection` keeps `showAll` and `selectedNumber`, and `ExpandableText` keeps `isExpanded`. All of these are local UI state, so they do not need a provider.
@@ -62,11 +63,13 @@ lib/
 ├── models/
 │   ├── movie.dart
 │   ├── media_details.dart        MediaDetails (overview, genres, collectionId, seasons, lastAirDate, inProduction) + Season
-│   └── episode.dart              Episode (number, name, airDate)
+│   ├── episode.dart              Episode (number, name, airDate)
+│   └── part_mark.dart            PartMark (series + part 's13' / 's17e4'), seasonPart, episodePart
 ├── services/
 │   └── movie_api.dart            class MovieApi: getPopularMovies(language, mediaType), searchMovies(query, language, mediaType), getDetails, getCollection, getSeason
 ├── providers/
 │   ├── movie_lists_provider.dart MovieListNotifier + favorites, watchlist and watched providers
+│   ├── part_marks_provider.dart  PartMarksNotifier (toggle, setAll) + favorite/watchlist/watched parts of a series
 │   ├── language_provider.dart    LanguageNotifier + languageProvider
 │   ├── media_type_provider.dart  MediaTypeNotifier + mediaTypeProvider (movie / tv)
 │   ├── storage_provider.dart     prefsProvider (overridden in main)
@@ -83,7 +86,8 @@ lib/
 │   ├── list_buttons.dart         favorite / watched / watchlist toggles on the details screen
 │   ├── expandable_text.dart      overview limited to 4 lines + More / Less (measured with TextPainter)
 │   ├── seasons_section.dart      season tiles in a Wrap (2 rows + See more), tap a season to show its episodes below with the date range
-│   ├── season_tile.dart          one season: name, episode count, start date
+│   ├── season_tile.dart          one season: name, watched/episode count, start date, part buttons
+│   ├── part_buttons.dart         favorite / watchlist / watched on a season or episode tile
 │   └── episode_tile.dart         one episode: number, name, air date
 ├── utils/
 │   └── date_format.dart          formatDate: 2015-12-24 -> 24.12.2015

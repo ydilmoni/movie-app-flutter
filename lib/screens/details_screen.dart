@@ -46,7 +46,7 @@ class DetailsScreen extends ConsumerWidget {
         ],
         if (loaded != null && loaded.seasons.isNotEmpty) ...[
           const SizedBox(height: 16),
-          SeasonsSection(tvId: movie.id, seasons: loaded.seasons),
+          SeasonsSection(series: movie, seasons: loaded.seasons),
         ],
       ],
     );

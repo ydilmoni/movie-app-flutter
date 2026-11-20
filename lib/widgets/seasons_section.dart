@@ -7,11 +7,17 @@ import 'episode_tile.dart';
 import '../models/episode.dart';
 import '../utils/date_format.dart';
 import '../theme/app_theme.dart';
+import '../models/movie.dart';
+
 class SeasonsSection extends ConsumerStatefulWidget {
-  final int tvId;                                                       // (A)
+  final Movie series;
   final List<Season> seasons;
 
-  const SeasonsSection({super.key, required this.tvId, required this.seasons});
+  const SeasonsSection({
+    super.key,
+    required this.series,
+    required this.seasons,
+  });
 
   @override
   ConsumerState<SeasonsSection> createState() => _SeasonsSectionState();
@@ -20,13 +26,14 @@ class SeasonsSection extends ConsumerStatefulWidget {
 class _SeasonsSectionState extends ConsumerState<SeasonsSection> {
   static const gap = 8.0;
   bool showAll = false;
-  int? selectedNumber;                                                  // (B)
+  int? selectedNumber; // (B)
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final perRow = ((constraints.maxWidth + gap) / (SeasonTile.width + gap)).floor();
+        final perRow = ((constraints.maxWidth + gap) / (SeasonTile.width + gap))
+            .floor();
         final limit = (perRow < 1 ? 1 : perRow) * 2;
         final hasMore = widget.seasons.length > limit;
         final visible = showAll || !hasMore
@@ -42,8 +49,9 @@ class _SeasonsSectionState extends ConsumerState<SeasonsSection> {
               children: [
                 for (final season in visible)
                   SeasonTile(
+                    series: widget.series,
                     season: season,
-                    isSelected: season.number == selectedNumber,         // (C)
+                    isSelected: season.number == selectedNumber, // (C)
                     onTap: () => setState(() => selectedNumber = season.number),
                   ),
               ],
@@ -54,7 +62,8 @@ class _SeasonsSectionState extends ConsumerState<SeasonsSection> {
                 icon: Icon(showAll ? Icons.expand_less : Icons.expand_more),
                 label: Text(showAll ? 'Show less' : 'See more'),
               ),
-            if (selectedNumber != null) ...[                            // (D)
+            if (selectedNumber != null) ...[
+              // (D)
               const SizedBox(height: 16),
               _buildEpisodes(selectedNumber!),
             ],
@@ -64,27 +73,38 @@ class _SeasonsSectionState extends ConsumerState<SeasonsSection> {
     );
   }
 
-  Widget _buildEpisodes(int seasonNumber) {                             // (E)
-    final episodesAsync =
-        ref.watch(seasonProvider((tvId: widget.tvId, season: seasonNumber)));
+  Widget _buildEpisodes(int seasonNumber) {
+    // (E)
+    final episodesAsync = ref.watch(
+      seasonProvider((tvId: widget.series.id, season: seasonNumber)),
+    );
 
     return episodesAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (error, stack) => Text('Error: $error'),
-      data: (episodes) {                                               // (D)
+      data: (episodes) {
+        // (D)
         final range = _dateRange(episodes);
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (range.isNotEmpty) ...[
-              Text(range, style: const TextStyle(color: AppColors.textSecondary)),
+              Text(
+                range,
+                style: const TextStyle(color: AppColors.textSecondary),
+              ),
               const SizedBox(height: 8),
             ],
             Wrap(
               spacing: gap,
               runSpacing: gap,
               children: [
-                for (final episode in episodes) EpisodeTile(episode: episode),
+                for (final episode in episodes)
+                  EpisodeTile(
+                    series: widget.series,
+                    seasonNumber: seasonNumber,
+                    episode: episode,
+                  ),
               ],
             ),
           ],
@@ -95,10 +115,10 @@ class _SeasonsSectionState extends ConsumerState<SeasonsSection> {
 
   String _dateRange(List<Episode> episodes) {
     final dates = episodes
-        .map((e) => e.airDate)                                         // (A)
-        .where((d) => d.isNotEmpty)                                    // (B)
+        .map((e) => e.airDate) // (A)
+        .where((d) => d.isNotEmpty) // (B)
         .toList();
     if (dates.isEmpty) return '';
-    return '${formatDate(dates.first)} - ${formatDate(dates.last)}';   // (C)
+    return '${formatDate(dates.first)} - ${formatDate(dates.last)}'; // (C)
   }
 }

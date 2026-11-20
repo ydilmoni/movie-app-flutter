@@ -76,7 +76,7 @@ lib/
   services/movie_api.dart   MovieApi (TMDB calls)
   providers/                favorites, search, movies, movieApi, language, storage
   screens/                  home_screen, movie_list_screen, details_screen
-  widgets/                  movie_card, movie_grid, seasons_section, season/episode tiles, list_buttons, expandable_text
+  widgets/                  movie_card, movie_grid, seasons_section, season/episode tiles, part_buttons, list_buttons, expandable_text
   theme/app_theme.dart      colors and ThemeData
 test/                       movie_model_test, movies_provider_test
 ```
